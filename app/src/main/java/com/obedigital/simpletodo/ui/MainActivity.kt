@@ -1,7 +1,8 @@
-package com.obedigital.simpletodo
+package com.obedigital.simpletodo.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.obedigital.simpletodo.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
