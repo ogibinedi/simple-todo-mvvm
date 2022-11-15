@@ -14,14 +14,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.obedigital.simpletodo.R
 import com.obedigital.simpletodo.database.SortOrder
+import com.obedigital.simpletodo.database.Task
 import com.obedigital.simpletodo.databinding.FragmentTasksBinding
-import com.obedigital.simpletodo.util.OnQueryTextChanged
+import com.obedigital.simpletodo.util.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class TasksFragment : Fragment(R.layout.fragment_tasks) {
+class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClickListener {
     private val viewModel: TasksViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,7 +32,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
         val menuHost : MenuHost = requireActivity()
 
         // instantiate TasksAdapter
-        val tasksAdapter = TasksAdapter()
+        val tasksAdapter = TasksAdapter(this)
 
         // apply binding to widget without initialize one by one
         binding.apply {
@@ -52,7 +53,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 val searchItem = menu.findItem(R.id.action_search)
                 val searchView = searchItem.actionView as SearchView
 
-                searchView.OnQueryTextChanged {
+                searchView.onQueryTextChanged {
                     // update search query
                     viewModel.searchQuery.value = it
                 }
@@ -87,6 +88,14 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 }
             }
         })
+    }
+
+    override fun onItemClick(task: Task) {
+        viewModel.onTaskSelected(task)
+    }
+
+    override fun onCheckBoxClick(task: Task, isChecked: Boolean) {
+        viewModel.onTaskCheckedChanged(task, isChecked)
     }
 
 }

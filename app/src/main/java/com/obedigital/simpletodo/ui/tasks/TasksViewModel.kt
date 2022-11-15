@@ -5,6 +5,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.obedigital.simpletodo.database.PreferencesManager
 import com.obedigital.simpletodo.database.SortOrder
+import com.obedigital.simpletodo.database.Task
 import com.obedigital.simpletodo.database.TaskDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    taskDao: TaskDao,
+    private val taskDao: TaskDao,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
     val searchQuery = MutableStateFlow("")
@@ -34,6 +35,9 @@ class TasksViewModel @Inject constructor(
         taskDao.getAllTasks(query, filterPreferences.sortOrder, filterPreferences.hideCompleted)
     }
 
+    // val tasks = taskDao.getAllTasks("bla").asLiveData()
+    val tasks = tasksFlow.asLiveData()
+
     fun onSortOrderSelected(sortOrder: SortOrder) = viewModelScope.launch {
         preferencesManager.updateSortOrder(sortOrder)
     }
@@ -41,6 +45,11 @@ class TasksViewModel @Inject constructor(
     fun onHideCompletedClick(hideCompleted: Boolean) = viewModelScope.launch {
         preferencesManager.updateHideCompleted(hideCompleted)
     }
-    // val tasks = taskDao.getAllTasks("bla").asLiveData()
-    val tasks = tasksFlow.asLiveData()
+
+    fun onTaskSelected(task: Task) {}
+
+    fun onTaskCheckedChanged(task: Task, isChecked: Boolean) = viewModelScope.launch {
+        taskDao.update(task.copy(completed = isChecked))
+    }
+
 }
