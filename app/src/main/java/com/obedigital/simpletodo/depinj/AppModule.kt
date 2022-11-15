@@ -10,12 +10,11 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
-//import dagger.hilt.android.components.ApplicationComponent
 import javax.inject.Singleton
 
 @Module
-//@InstallIn(ApplicationComponent::class)
 @InstallIn(SingletonComponent::class)
+//@InstallIn(SingletonComponent::class)
 object AppModule {
     @Provides
     @Singleton
