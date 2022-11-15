@@ -10,11 +10,15 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.obedigital.simpletodo.R
+import com.obedigital.simpletodo.database.SortOrder
 import com.obedigital.simpletodo.databinding.FragmentTasksBinding
 import com.obedigital.simpletodo.util.OnQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TasksFragment : Fragment(R.layout.fragment_tasks) {
@@ -52,21 +56,26 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                     // update search query
                     viewModel.searchQuery.value = it
                 }
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    menu.findItem(R.id.action_hide_completed_tasks).isChecked =
+                        viewModel.preferencesFlow.first().hideCompleted
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when(menuItem.itemId) {
                     R.id.action_sort_by_name -> {
-                        viewModel.sortOrder.value = SortOrder.BY_NAME
+                        viewModel.onSortOrderSelected(SortOrder.BY_NAME)
                         true
                     }
                     R.id.action_sort_by_date_created -> {
-                        viewModel.sortOrder.value = SortOrder.BY_DATE
+                        viewModel.onSortOrderSelected(SortOrder.BY_DATE)
                         true
                     }
                     R.id.action_hide_completed_tasks -> {
                         menuItem.isChecked = !menuItem.isChecked
-                        viewModel.hideCompleted.value = menuItem.isChecked
+                        viewModel.onHideCompletedClick(menuItem.isChecked)
                         true
                     }
                     R.id.action_delete_all_completed_tasks -> {
