@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.obedigital.simpletodo.R
 import com.obedigital.simpletodo.database.Task
 import com.obedigital.simpletodo.databinding.ItemTaskBinding
 
