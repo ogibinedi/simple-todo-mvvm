@@ -1,44 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.form.TaskFormFragment">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:padding="8dp">
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:hint="@string/label_form_task">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_et_task"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"/>
+                android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
+
         <CheckBox
             android:id="@+id/cb_important_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/text_input_layout"
             android:layout_marginTop="10dp"
-            android:text="@string/label_important_task_checkbox"
-            android:layout_below="@id/text_input_layout"/>
-        <TextView
-            android:id="@+id/tv_date_created"
-            android:layout_width="wrap_content"
+            android:button="@drawable/bg_checkbox"
+            android:text="@string/label_important_task_checkbox" />
+
+        <LinearLayout
+            android:id="@+id/ll_date_created"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="10dp"
-            android:text="@string/label_date_created"
-            android:layout_below="@id/cb_important_task"/>
+            android:layout_below="@id/cb_important_task"
+            android:weightSum="2">
+            <TextView
+                android:id="@+id/tv_label_created"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/label_date_created" />
+
+            <TextView
+                android:id="@+id/tv_date_created"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/date_value" />
+        </LinearLayout>
     </RelativeLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_task_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_check"/>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:src="@drawable/ic_check" />
+</RelativeLayout>

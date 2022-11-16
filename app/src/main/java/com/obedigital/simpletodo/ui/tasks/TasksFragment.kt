@@ -6,11 +6,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +18,7 @@ import com.obedigital.simpletodo.R
 import com.obedigital.simpletodo.database.SortOrder
 import com.obedigital.simpletodo.database.Task
 import com.obedigital.simpletodo.databinding.FragmentTasksBinding
+import com.obedigital.simpletodo.util.exhaustive
 import com.obedigital.simpletodo.util.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -26,13 +26,14 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClickListener {
-    private val viewModel: TasksViewModel by viewModels()
+    val viewModel: TasksViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = FragmentTasksBinding.bind(view)
-        val menuHost : MenuHost = requireActivity()
+        // val menuHost : MenuHost = requireActivity()
+        setHasOptionsMenu(true)
 
         // instantiate TasksAdapter
         val tasksAdapter = TasksAdapter(this)
@@ -59,6 +60,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                     viewModel.onTaskSwiped(task)
                 }
             }).attachToRecyclerView(rvTasks)
+
+            fabAddTask.setOnClickListener {
+                viewModel.onAddNewTaskClick()
+            }
         }
 
         viewModel.tasks.observe(viewLifecycleOwner) {
@@ -74,7 +79,15 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
                     }
-                }
+                    is TasksViewModel.TasksEvent.NavigateToAddTaskScreen -> {
+                        val action = TasksFragmentDirections.actionTasksFragmentToTaskFormFragment("New Task")
+                        findNavController().navigate(action)
+                    }
+                    is TasksViewModel.TasksEvent.NavigateToEditTaskScreen -> {
+                        val action = TasksFragmentDirections.actionTasksFragmentToTaskFormFragment("Edit Task", event.task)
+                        findNavController().navigate(action)
+                    }
+                }.exhaustive
             }
         }
 
@@ -82,6 +95,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
             tasksAdapter.submitList(it)
         }
 
+        /**
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
@@ -99,8 +113,8 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                 }
             }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when(menuItem.itemId) {
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                return when(item.itemId) {
                     R.id.action_sort_by_name -> {
                         viewModel.onSortOrderSelected(SortOrder.BY_NAME)
                         true
@@ -110,8 +124,8 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                         true
                     }
                     R.id.action_hide_completed_tasks -> {
-                        menuItem.isChecked = !menuItem.isChecked
-                        viewModel.onHideCompletedClick(menuItem.isChecked)
+                        item.isChecked = !item.isChecked
+                        viewModel.onHideCompletedClick(item.isChecked)
                         true
                     }
                     R.id.action_delete_all_completed_tasks -> {
@@ -122,8 +136,9 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                     }
                 }
             }
-        })
+        }) */
     }
+
 
     override fun onItemClick(task: Task) {
         viewModel.onTaskSelected(task)
@@ -131,6 +146,48 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
 
     override fun onCheckBoxClick(task: Task, isChecked: Boolean) {
         viewModel.onTaskCheckedChanged(task, isChecked)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_fragment_tasks, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.onQueryTextChanged {
+            viewModel.searchQuery.value = it
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            menu.findItem(R.id.action_hide_completed_tasks).isChecked =
+                viewModel.preferencesFlow.first().hideCompleted
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.action_sort_by_name -> {
+                viewModel.onSortOrderSelected(SortOrder.BY_NAME)
+                true
+            }
+            R.id.action_sort_by_date_created -> {
+                viewModel.onSortOrderSelected(SortOrder.BY_DATE)
+                true
+            }
+            R.id.action_hide_completed_tasks -> {
+                item.isChecked = !item.isChecked
+                viewModel.onHideCompletedClick(item.isChecked)
+                true
+            }
+            R.id.action_delete_all_completed_tasks -> {
+                true
+            }
+            else -> {
+                true
+            }
+        }
     }
 
 }
