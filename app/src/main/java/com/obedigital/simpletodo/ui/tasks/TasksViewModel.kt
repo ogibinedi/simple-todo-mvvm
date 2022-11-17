@@ -7,6 +7,8 @@ import com.obedigital.simpletodo.database.PreferencesManager
 import com.obedigital.simpletodo.database.SortOrder
 import com.obedigital.simpletodo.database.Task
 import com.obedigital.simpletodo.database.TaskDao
+import com.obedigital.simpletodo.ui.ADD_TASK_RESULT_OK
+import com.obedigital.simpletodo.ui.EDIT_TASK_RESULT_OK
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -69,10 +71,22 @@ class TasksViewModel @ViewModelInject constructor(
         tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
     }
 
+    fun onAddEditResult(result: Int) {
+        when(result) {
+            ADD_TASK_RESULT_OK -> showTaskSavedConfirmationMessage("Task added")
+            EDIT_TASK_RESULT_OK -> showTaskSavedConfirmationMessage("Task updated")
+        }
+    }
+
+    private fun showTaskSavedConfirmationMessage(text: String) = viewModelScope.launch {
+        tasksEventChannel.send(TasksEvent.ShowTaskSavedConfirmationMessage(text))
+    }
+
     sealed class TasksEvent {
         object NavigateToAddTaskScreen : TasksEvent()
         data class NavigateToEditTaskScreen(val task: Task) : TasksEvent()
         data class ShowUndoDeleteTaskMessage(val task: Task) : TasksEvent()
+        data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
     }
 
 }
