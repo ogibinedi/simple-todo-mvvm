@@ -3,7 +3,7 @@ package com.obedigital.simpletodo.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.obedigital.simpletodo.depinj.ApplicationScope
+import com.obedigital.simpletodo.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Simple TODO</string>
-    <string name="label_form_task">Add or Edit Task</string>
+    <string name="label_form_task">Todo Title</string>
     <string name="label_important_task_checkbox">Important Task</string>
     <string name="label_date_created">Date Created:</string>
     <string name="title_search">Search</string>
@@ -9,5 +9,5 @@
     <string name="label_sort_by_date_created">Sort by date created</string>
     <string name="label_hide_completed_tasks">Hide completed tasks</string>
     <string name="label_delete_completed_tasks">Delete all completed tasks</string>
-    <string name="date_value">16-11-2022 00:00:00</string>
+    <string name="date_value">16–11–2022 00:00:00</string>
 </resources>

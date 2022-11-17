@@ -1,4 +1,4 @@
-package com.obedigital.simpletodo.depinj
+package com.obedigital.simpletodo.di
 
 import android.app.Application
 import androidx.room.Room

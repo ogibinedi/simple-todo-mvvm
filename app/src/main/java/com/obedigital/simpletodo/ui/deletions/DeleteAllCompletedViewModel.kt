@@ -3,7 +3,7 @@ package com.obedigital.simpletodo.ui.deletions
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.obedigital.simpletodo.database.TaskDao
-import com.obedigital.simpletodo.depinj.ApplicationScope
+import com.obedigital.simpletodo.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
